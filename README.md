@@ -1,82 +1,95 @@
 # Agent Tester
 
-![Licence](https://img.shields.io/badge/licence-MIT-6c8cff)
-![Taille](https://img.shields.io/badge/app-un_seul_fichier_index.html-1a1d27)
-![IA](https://img.shields.io/badge/IA-Puter.js_(User--Pays)-3ecf8e)
+![License](https://img.shields.io/badge/license-MIT-6c8cff)
+![Live demo](https://img.shields.io/badge/demo-sergio744.github.io%2FAgent--Tester-3ecf8e)
+![Size](https://img.shields.io/badge/app-single_HTML_file-1a1d27)
+![AI](https://img.shields.io/badge/AI-Puter.js_(User--Pays)-6c8cff)
 
-> Évalue un **package d'agent IA** (prompts, workflows, configs…) en deux temps : une **analyse statique** par LLM, puis des **tests dynamiques** générés et exécutés automatiquement — le tout dans une page web unique, sans backend.
+> Test an **AI agent package** (prompts, workflows, configs…) in two steps: a **static LLM analysis**, then **dynamic tests generated and executed automatically** — all in a single web page, no backend.
 
-## À quoi ça sert
+🌍 *Ce README existe aussi en [français](README.fr.md).*
 
-Tu as un agent (Custom GPT, LangChain, CrewAI, AutoGen… peu importe la forme : un dossier de prompts, un YAML de config, un zip de workflow) et tu veux savoir s'il est **clair, robuste et sécurisé** avant de t'en servir. Agent Tester :
+🚀 **Live demo:** [https://sergio744.github.io/Agent-Tester/](https://sergio744.github.io/Agent-Tester/) — open the URL, drop a package, click *Analyze*.
 
-1. lit ton package,
-2. le fait analyser par un modèle puissant (scores, forces, faiblesses, risques),
-3. génère automatiquement de 8 à 20 cas de test (dont jailbreak / prompt injection / cas limites / multilingue),
-4. exécute ces tests contre une **simulation** de ton agent ou contre ton **endpoint réel**,
-5. fait juger chaque réponse, puis produit un **rapport** exportable (Markdown, PDF, cloud Puter).
+![Agent Tester — report demo](docs/demo.gif)
 
-## Fonctionnalités
+*(Illustrative preview: frames re-rendered with the app's own styles and colors; sample data, not a live analysis.)*
 
-- Upload glisser-déposer : `.md`, `.txt`, `.json`, `.yaml`/`.yml`, `.csv`, et `.zip` (exploré fichier par fichier avec JSZip)
-- `.pdf` / `.docx` acceptés (téléversés sur Puter FS — contenu binaire non lu, voir *Limites*)
-- Extraction automatique du prompt système par heuristiques (`system_prompt:`, `"system": "…"`, `instructions:`, `You are a/an/the…`, avec repli sur le début du premier fichier)
-- **Analyse statique** structurée : vue d'ensemble, scores 0–10 (6 critères + score global), points forts, points faibles & risques, edge cases problématiques, recommandations priorisées
-- **Tests dynamiques** couvrant : capacités principales, cas limites, tentatives de jailbreak / prompt injection, cohérence et refus appropriés, multilingue, hallucinations potentielles, respect des workflows
-- Deux modes d'exécution :
-  - **Simulation** — le prompt système extrait est rejoué par le modèle d'évaluation (Puter AI) ;
-  - **Endpoint personnalisé** — chaque test est envoyé en `POST` JSON vers ton agent réel (header `Authorization` optionnel). Réponses reconnues : `choices[0].message.content`, `response`, `message`, sinon JSON brut affiché tel quel.
-- Évaluation automatique de chaque réponse : **PASS / FAIL / WARN** + commentaire court
-- Rapport final en Markdown rendu à l'écran, avec trois exports : téléchargement `.md`, sauvegarde dans Puter (`Agent-Tester-Reports/`), impression / PDF
-- Interface bilingue **FR / EN** (boutons en haut), thème sombre, responsive
-- 100 % client : un seul fichier `index.html`, aucune installation, aucune clé API, aucun build
+## What it's for
 
-## Démarrage rapide
+You built an agent (Custom GPT, LangChain, CrewAI, AutoGen… any form: a folder of prompts, a YAML config, a zip of workflows) and you want to know whether it is **clear, robust and secure** before relying on it. Agent Tester:
 
-1. Ouvre `index.html` dans un navigateur moderne (double-clic suffit ; connexion internet requise pour les CDN et l'IA).
-2. Dépose ton package (un ou plusieurs fichiers, ou un zip).
-3. Choisis le modèle d'évaluation, le mode de test et le nombre de tests.
-4. Clique **Analyser**. À la première utilisation de l'IA, Puter demande de se connecter : c'est le modèle **User-Pays** — chaque visiteur consomme ses propres crédits IA, le site n'héberge ni ne paie rien (cf. [developer.puter.com](https://developer.puter.com/)).
-5. Lis le rapport, puis exporte-le en `.md`, en PDF, ou sauvegarde-le dans ton espace Puter.
+1. reads your package,
+2. has it analyzed by a strong model (scores, strengths, weaknesses, risks),
+3. automatically generates 8 to 20 test cases (including jailbreak / prompt injection / edge cases / multilingual),
+4. runs those tests against a **simulation** of your agent or your **real endpoint**,
+5. has every answer judged, then produces an **exportable report** (Markdown, PDF, Puter cloud).
 
-## Modes de test dynamique
+## Features
 
-| Mode | Principe | À quoi ça sert |
+- Drag & drop upload: `.md`, `.txt`, `.json`, `.yaml`/`.yml`, `.csv`, and `.zip` (browsed file by file with JSZip)
+- `.pdf` / `.docx` accepted (uploaded to Puter FS — binary content is not read, see *Limitations*)
+- Automatic system-prompt extraction with heuristics (`system_prompt:`, `"system": "…"`, `instructions:`, `You are a/an/the…`, falling back to the start of the first file)
+- **Static analysis**: overview, 0–10 scores (6 criteria + overall), strengths, weaknesses & risks, problematic edge cases, prioritized recommendations
+- **Dynamic tests** covering: core capabilities, edge cases, jailbreak / prompt injection attempts, coherence and proper refusals, multilingual behavior, potential hallucinations, workflow compliance
+- Two execution modes:
+  - **Simulation** — the extracted system prompt is replayed by the evaluation model (Puter AI);
+  - **Custom endpoint** — each test is sent as a `POST` JSON request to your real agent (optional `Authorization` header). Recognized responses: `choices[0].message.content`, `response`, `message`, otherwise raw JSON is displayed.
+- Automatic verdict per test: **PASS / FAIL / WARN** + short comment
+- Final Markdown report rendered on screen, with three exports: download `.md`, save to Puter (`Agent-Tester-Reports/`), print / PDF
+- Bilingual **FR / EN** interface (buttons at the top), dark theme, responsive
+- 100% client-side: one `index.html` file, nothing to install, no API key, no build
+
+## Quick start
+
+1. Open [the live demo](https://sergio744.github.io/Agent-Tester/) — or open `index.html` in a modern browser (internet required for the CDN scripts and the AI).
+2. Drop your package (one or more files, or a zip).
+3. Pick the evaluation model, the test mode and the number of tests.
+4. Click **Analyze**. On first AI use, Puter asks you to sign in: that's the **User-Pays** model — each visitor consumes their own AI credits, the site hosts and pays nothing (see [developer.puter.com](https://developer.puter.com/)).
+5. Read the report, then export it as `.md`, PDF, or save it to your Puter space.
+
+## Dynamic test modes
+
+| Mode | How it works | Use case |
 |---|---|---|
-| Simulation | Le prompt système extrait de ton package est envoyé comme prompt `system` au modèle d'évaluation. | Tester la qualité du prompt lui-même, sans déployer l'agent. |
-| Endpoint personnalisé | Chaque test part en POST JSON vers ton agent réel, avec le prompt système extrait en `system`. | Tester ton agent déployé, tel qu'il répond en production. |
+| Simulation | The system prompt extracted from your package is sent as the `system` message to the evaluation model. | Test the quality of the prompt itself, without deploying the agent. |
+| Custom endpoint | Every test is POSTed as JSON to your real agent, with the extracted system prompt as `system`. | Test your deployed agent exactly as it answers in production. |
 
-## Confidentialité
+## Privacy
 
-- Le **texte** de tes fichiers est transmis au modèle d'évaluation choisi, via Puter.
-- En mode endpoint personnalisé, les prompts de test et l'en-tête d'authentification éventuel partent vers l'URL que **tu** indiques.
-- Les PDF / DOCX sont téléversés vers ton Puter FS (dossier `agent-tester-temp/`).
-- ⚠️ Le rapport est rendu avec `marked` **sans sanitisation** : n'analyse que des packages dont tu connais la provenance.
+- The **text** of your files is sent to the evaluation model you pick, via Puter.
+- In custom-endpoint mode, the test prompts and any authentication header go to the URL **you** enter.
+- PDF / DOCX files are uploaded to your Puter FS (`agent-tester-temp/` folder).
+- ⚠️ The report is rendered with `marked` **without sanitization**: only analyze packages whose provenance you trust.
 
-## Limites connues
+## Known limitations
 
-- L'analyse statique ne voit que les **55 000 premiers caractères** du package, la génération de tests les 22 000 premiers : les gros packages sont analysés partiellement.
-- PDF / DOCX : seul le chemin Puter est transmis au modèle, le contenu n'est pas extrait côté navigateur.
-- L'extraction du prompt système est une heuristique regex : sur un format inhabituel, elle retombe sur le début du premier fichier.
-- Les options des menus déroulants ne sont pas traduites quand on passe en EN.
-- Le verdict PASS / FAIL est produit par un LLM : non déterministe, à relire.
-- Aucun timeout sur les appels vers l'endpoint personnalisé.
+- Static analysis only sees the **first 55,000 characters** of the package; test generation sees the first 22,000: large packages are partially analyzed.
+- PDF / DOCX: only the Puter path is passed to the model, the content is not extracted in the browser.
+- System-prompt extraction is regex-based heuristics: on unusual formats it falls back to the beginning of the first file.
+- Dropdown options are not translated when switching to EN.
+- The PASS / FAIL verdict comes from an LLM: not deterministic, review it.
+- No timeout on calls to the custom endpoint.
 
-## Structure du dépôt
+## Repository structure
 
 ```
-index.html   — toute l'application (HTML + CSS + JS)
+index.html   — the whole application (HTML + CSS + JS)
+docs/
+  demo.gif            — animated preview (illustrative)
+  social-preview.png  — image used for social cards
 README.md
+README.fr.md
 LICENSE      — MIT
 ```
 
-## Stack technique
+## Tech stack
 
-- [Puter.js v2](https://developer.puter.com) — IA + stockage cloud, sans clé API (modèle User-Pays)
-- [JSZip 3.10.1](https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js) — lecture des `.zip`
-- [marked](https://cdn.jsdelivr.net/npm/marked/marked.min.js) — rendu Markdown du rapport
-- JavaScript vanilla — aucune dépendance npm, aucun build
+- [Puter.js v2](https://developer.puter.com) — AI + cloud storage, no API key (User-Pays model)
+- [JSZip 3.10.1](https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js) — reading `.zip` packages
+- [marked](https://cdn.jsdelivr.net/npm/marked/marked.min.js) — Markdown rendering of the report
+- Vanilla JavaScript — no npm dependency, no build step
 
-## Licence
+## License
 
 [MIT](LICENSE) — Copyright © 2026 Sergio744
